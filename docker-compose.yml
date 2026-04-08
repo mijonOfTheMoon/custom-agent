@@ -9,7 +9,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
-      OTEL_EBPF_METRICS_FEATURES: network,application,statsapplication_service_graph
+      OTEL_EBPF_METRICS_FEATURES: application,application_service_graph
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     depends_on:
