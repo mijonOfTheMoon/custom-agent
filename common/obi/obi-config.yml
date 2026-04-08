@@ -1,0 +1,10 @@
+otel_traces_export:
+  endpoint: http://otel-collector:4317
+  protocol: grpc
+
+ebpf:
+  context_propagation: 'all'
+  log_enricher:
+    services:
+      - service:
+          - open_ports: '${OBI_OPEN_PORT}'

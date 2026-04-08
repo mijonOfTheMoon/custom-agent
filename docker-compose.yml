@@ -7,6 +7,11 @@ services:
       OTEL_EBPF_TRACE_PRINTER: text
       OTEL_EBPF_OPEN_PORT: ${OBI_OPEN_PORT}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
+      OTEL_EBPF_CONFIG_PATH: /config/obi-config.yml
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - ./common/obi/obi-config.yml:/config/obi-config.yml
     depends_on:
       - otel-collector
     networks:
@@ -36,8 +41,8 @@ services:
       - CLICKHOUSE_HOST=${CLICKHOUSE_HOST}
       - SIGNOZ_WS=${SIGNOZ_WS}
     ports:
-      # - "4317:4317" # OTLP gRPC receiver
-      - "4318:4318" # OTLP HTTP receiver
+      - "4317:4317" # OTLP gRPC receiver
+      # - "4318:4318" # OTLP HTTP receiver
     networks:
       - signoz-agent-net
 
