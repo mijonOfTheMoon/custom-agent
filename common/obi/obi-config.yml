@@ -2,6 +2,10 @@ otel_traces_export:
   endpoint: http://otel-collector:4317
   protocol: grpc
 
+otel_metrics_export:
+  endpoint: http://otel-collector:4317
+  protocol: grpc
+
 ebpf:
   context_propagation: 'all'
   log_enricher:
