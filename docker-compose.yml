@@ -6,7 +6,7 @@ services:
     privileged: true
     environment:
       OTEL_EBPF_TRACE_PRINTER: text
-      OTEL_EBPF_AUTO_TARGET_LANGUAGE: nodejs,php
+      OTEL_EBPF_OPEN_PORT: ${OBI_OPEN_PORT}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
@@ -32,12 +32,12 @@ services:
       - ./common/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
       - /:/hostfs:ro
     environment:
-      - OTEL_RESOURCE_ATTRIBUTES=host.name=signoz-host,os.type=linux
-      - LOW_CARDINAL_EXCEPTION_GROUPING=false
-      - SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN=tcp://${CLICKHOUSE_HOST}:9000
-      - SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER=cluster
-      - SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION=true
-      - SIGNOZ_OTEL_COLLECTOR_TIMEOUT=10m
-      - CLICKHOUSE_HOST=${CLICKHOUSE_HOST}
-      - SIGNOZ_WS=${SIGNOZ_WS}
+      OTEL_RESOURCE_ATTRIBUTES: host.name=signoz-host,os.type=linux
+      LOW_CARDINAL_EXCEPTION_GROUPING: 'false'
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN: tcp://${CLICKHOUSE_HOST}:9000
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER: cluster
+      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION: 'true'
+      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
+      CLICKHOUSE_HOST: ${CLICKHOUSE_HOST}
+      SIGNOZ_WS: ${SIGNOZ_WS}
     restart: always
