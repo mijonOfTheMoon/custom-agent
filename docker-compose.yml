@@ -2,25 +2,24 @@ services:
   autoinstrumenter:
     image: otel/ebpf-instrument:main
     pid: 'host'
+    network_mode: 'host'
     privileged: true
     environment:
       OTEL_EBPF_TRACE_PRINTER: text
-      OTEL_EBPF_OPEN_PORT: ${OBI_OPEN_PORT}
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EBPF_AUTO_TARGET_LANGUAGE: nodejs,php
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
-      OTEL_EBPF_METRICS_FEATURES: application,application_service_graph
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
     depends_on:
       - otel-collector
-    networks:
-      - signoz-agent-net
     restart: always
 
   otel-collector:
     image: signoz/signoz-otel-collector:v0.144.2
     container_name: signoz-otel-collector
+    network_mode: 'host'
     entrypoint:
       - /bin/sh
     command:
@@ -41,12 +40,4 @@ services:
       - SIGNOZ_OTEL_COLLECTOR_TIMEOUT=10m
       - CLICKHOUSE_HOST=${CLICKHOUSE_HOST}
       - SIGNOZ_WS=${SIGNOZ_WS}
-    ports:
-      - "4317:4317" # OTLP gRPC receiver
-      # - "4318:4318" # OTLP HTTP receiver
-    networks:
-      - signoz-agent-net
     restart: always
-
-networks:
-  signoz-agent-net:
