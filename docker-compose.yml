@@ -1,17 +1,19 @@
 services:
-  autoinstrumenter:
-    image: otel/ebpf-instrument:main
+  coroot-node-agent:
+    image: ghcr.io/coroot/coroot-node-agent
     pid: 'host'
     network_mode: 'host'
     privileged: true
-    environment:
-      OTEL_EBPF_TRACE_PRINTER: text
-      OTEL_EBPF_OPEN_PORT: ${OBI_OPEN_PORT}
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:4317
-      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-      OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /sys/kernel/tracing:/sys/kernel/tracing
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /sys/fs/cgroup:/host/sys/fs/cgroup
+      - coroot_agent_data:/data
+    command:
+      - '--traces-endpoint=http://localhost:4318/v1/traces'
+      - '--logs-endpoint=http://localhost:4318/v1/logs'
+      - '--cgroupfs-root=/host/sys/fs/cgroup'
+      - '--wal-dir=/data'
     depends_on:
       - otel-collector
     restart: always
@@ -41,3 +43,6 @@ services:
       CLICKHOUSE_HOST: ${CLICKHOUSE_HOST}
       SIGNOZ_WS: ${SIGNOZ_WS}
     restart: always
+
+volumes:
+  coroot_agent_data:
