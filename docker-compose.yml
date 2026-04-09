@@ -16,6 +16,7 @@ services:
       - otel-collector
     networks:
       - signoz-agent-net
+    restart: always
 
   otel-collector:
     image: signoz/signoz-otel-collector:v0.144.2
@@ -45,6 +46,7 @@ services:
       # - "4318:4318" # OTLP HTTP receiver
     networks:
       - signoz-agent-net
+    restart: always
 
 networks:
   signoz-agent-net:
