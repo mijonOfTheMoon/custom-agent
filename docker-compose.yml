@@ -1,4 +1,5 @@
 services:
+  
   coroot-node-agent:
     image: ghcr.io/coroot/coroot-node-agent
     pid: 'host'
