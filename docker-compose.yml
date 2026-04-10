@@ -13,7 +13,7 @@ services:
     command:
       - '--cgroupfs-root=/host/sys/fs/cgroup'
       - '--wal-dir=/data'
-      - '--container-denylist=coroot-node-agent|signoz-otel-collector'
+      - '--container-denylist=.*coroot.*|.*signoz.*'
       - '--traces-endpoint=http://localhost:4318/v1/traces'
       - '--logs-endpoint=http://localhost:4318/v1/logs'
       - '--listen=0.0.0.0:9100'
