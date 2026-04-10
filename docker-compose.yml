@@ -10,8 +10,7 @@ services:
       - /sys/fs/cgroup:/host/sys/fs/cgroup
       - coroot_agent_data:/data
     command:
-      - '--traces-endpoint=http://localhost:4318/v1/traces'
-      - '--logs-endpoint=http://localhost:4318/v1/logs'
+      - '--collector-endpoint=http://localhost:4318'
       - '--cgroupfs-root=/host/sys/fs/cgroup'
       - '--wal-dir=/data'
     depends_on:
