@@ -1,6 +1,6 @@
 services:
-  
-  coroot-node-agent:
+
+  node-agent:
     image: ghcr.io/coroot/coroot-node-agent
     pid: 'host'
     network_mode: 'host'
@@ -18,9 +18,8 @@ services:
       - otel-collector
     restart: always
 
-  otel-collector:
+  signoz-otel-collector:
     image: signoz/signoz-otel-collector:v0.144.2
-    container_name: signoz-otel-collector
     network_mode: 'host'
     entrypoint:
       - /bin/sh
