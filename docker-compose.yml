@@ -15,7 +15,7 @@ services:
       - '--cgroupfs-root=/host/sys/fs/cgroup'
       - '--wal-dir=/data'
     depends_on:
-      - otel-collector
+      - signoz-otel-collector
     restart: always
 
   signoz-otel-collector:
