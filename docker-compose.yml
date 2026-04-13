@@ -1,6 +1,7 @@
 services:
+
   autoinstrumenter:
-    image: otel/ebpf-instrument:main
+    image: otel/ebpf-instrument:v0.7.1
     pid: 'host'
     network_mode: 'host'
     privileged: true
