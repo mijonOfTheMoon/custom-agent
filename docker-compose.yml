@@ -1,50 +1,12 @@
 services:
-
-  node-agent:
-    image: ghcr.io/coroot/coroot-node-agent
-    pid: 'host'
-    network_mode: 'host'
+  deepflow-agent:
+    image: registry.cn-hongkong.aliyuncs.com/deepflow-ce/deepflow-agent:v7.1
+    container_name: deepflow-agent
+    restart: always
     privileged: true
     volumes:
-      - /sys/kernel/tracing:/sys/kernel/tracing
-      - /sys/kernel/debug:/sys/kernel/debug
-      - /sys/fs/cgroup:/host/sys/fs/cgroup
-      - coroot_agent_data:/data
-    command:
-      - '--cgroupfs-root=/host/sys/fs/cgroup'
-      - '--wal-dir=/data'
-      - '--container-denylist=.*coroot.*|.*signoz.*'
-      - '--traces-endpoint=http://localhost:4318/v1/traces'
-      - '--logs-endpoint=http://localhost:4318/v1/logs'
-      - '--listen=0.0.0.0:9100'
-    depends_on:
-      - signoz-otel-collector
-    restart: always
-
-  signoz-otel-collector:
-    image: signoz/signoz-otel-collector:v0.144.2
-    network_mode: 'host'
-    entrypoint:
-      - /bin/sh
-    command:
-      - -c
-      - |
-        echo "server_endpoint: $SIGNOZ_WS" > /tmp/manager-config.yaml &&
-        /signoz-otel-collector migrate sync check &&
-        /signoz-otel-collector --config=/etc/otel-collector-config.yaml --manager-config=/tmp/manager-config.yaml --copy-path=/var/tmp/collector-config.yaml
-    volumes:
-      - ./common/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-      - /:/hostfs:ro
-    environment:
-      OTEL_RESOURCE_ATTRIBUTES: host.name=signoz-host,os.type=linux
-      LOW_CARDINAL_EXCEPTION_GROUPING: 'false'
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN: tcp://${CLICKHOUSE_HOST}:9000
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER: cluster
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION: 'true'
-      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
-      CLICKHOUSE_HOST: ${CLICKHOUSE_HOST}
-      SIGNOZ_WS: ${SIGNOZ_WS}
-    restart: always
-
-volumes:
-  coroot_agent_data:
+      - ./config/agent-config.yaml:/etc/deepflow-agent/deepflow-agent.yaml:ro
+      - /sys/kernel/debug:/sys/kernel/debug:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: "host"
+    pid: "host"
