@@ -1,44 +1,12 @@
 services:
-
-  autoinstrumenter:
-    image: otel/ebpf-instrument:v0.7.1
-    pid: 'host'
-    network_mode: 'host'
+  deepflow-agent:
+    image: registry.cn-hongkong.aliyuncs.com/deepflow-ce/deepflow-agent:v7.1
+    container_name: deepflow-agent
+    restart: always
     privileged: true
-    environment:
-      OTEL_EBPF_TRACE_PRINTER: text
-      OTEL_EBPF_OPEN_PORT: ${OBI_OPEN_PORT}
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://localhost:4317
-      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-      OTEL_EBPF_BPF_CONTEXT_PROPAGATION: all
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup
-    depends_on:
-      - otel-collector
-    restart: always
-
-  otel-collector:
-    image: signoz/signoz-otel-collector:v0.144.2
-    container_name: signoz-otel-collector
-    network_mode: 'host'
-    entrypoint:
-      - /bin/sh
-    command:
-      - -c
-      - |
-        echo "server_endpoint: $SIGNOZ_WS" > /tmp/manager-config.yaml &&
-        /signoz-otel-collector migrate sync check &&
-        /signoz-otel-collector --config=/etc/otel-collector-config.yaml --manager-config=/tmp/manager-config.yaml --copy-path=/var/tmp/collector-config.yaml
-    volumes:
-      - ./common/otel/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-      - /:/hostfs:ro
-    environment:
-      OTEL_RESOURCE_ATTRIBUTES: host.name=signoz-host,os.type=linux
-      LOW_CARDINAL_EXCEPTION_GROUPING: 'false'
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN: tcp://${CLICKHOUSE_HOST}:9000
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_CLUSTER: cluster
-      SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_REPLICATION: 'true'
-      SIGNOZ_OTEL_COLLECTOR_TIMEOUT: 10m
-      CLICKHOUSE_HOST: ${CLICKHOUSE_HOST}
-      SIGNOZ_WS: ${SIGNOZ_WS}
-    restart: always
+      - ./config/agent-config.yaml:/etc/deepflow-agent/deepflow-agent.yaml:ro
+      - /sys/kernel/debug:/sys/kernel/debug:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: "host"
+    pid: "host"
